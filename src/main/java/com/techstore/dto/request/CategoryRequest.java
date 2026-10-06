@@ -12,7 +12,7 @@ import lombok.experimental.FieldDefaults;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class CategoryRequest {
 
-    @NotBlank(message = "Category name is required")
-    @Size(max = 100, message = "Category name must not exceed 100 characters")
-    String name;
+  @NotBlank(message = "Category name is required")
+  @Size(max = 100, message = "Category name must not exceed 100 characters")
+  String name;
 }
