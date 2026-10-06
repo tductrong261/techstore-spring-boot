@@ -1,74 +1,57 @@
 package com.techstore.controller;
 
-import com.techstore.entity.Product;
-import com.techstore.service.CategoryService;
+import com.techstore.dto.request.ProductRequest;
+import com.techstore.dto.response.ApiResponse;
+import com.techstore.dto.response.ProductResponse;
 import com.techstore.service.ProductService;
+import jakarta.validation.Valid;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
-@RequestMapping("/products")
+@RestController
+@RequestMapping("/api/products")
 @RequiredArgsConstructor
-@FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class ProductController {
-    ProductService productService;
-    CategoryService categoryService;
 
-    // List all products
-    @GetMapping
-    public String listProducts(Model model) {
-        // Implementation here
-        model.addAttribute("products", productService.getAllProducts());
-        return "products/list";
-    }
+  ProductService productService;
 
-    // Show form to create a new product
-    @GetMapping("/create")
-    public String showCreateForm(Model model) {
-        // Implementation here
-        model.addAttribute("product", new Product());
-        model.addAttribute("categories", categoryService.getAllCategories());
-        return "products/form";
-    }
+  @PostMapping
+  public ApiResponse<ProductResponse> createProduct(@Valid @RequestBody ProductRequest request) {
+    var result = productService.createProduct(request);
 
-    // Save a new product
-    @PostMapping
-    public String createProduct(@ModelAttribute Product product) {
-        // Implementation here
-        productService.saveProduct(product);
-        return "redirect:/products";
-    }
+    return ApiResponse.<ProductResponse>builder().data(result).build();
+  }
 
-    // Show form to edit an existing product
-    @GetMapping("/edit/{id}")
-    public String showEditForm(
-            @PathVariable Long id,
-            Model model) {
-        Product product = productService.getProductById(id);
-        model.addAttribute("product", product);
-        model.addAttribute("categories", categoryService.getAllCategories());
-        return "products/form";
-    }
+  @GetMapping
+  public ApiResponse<List<ProductResponse>> getAllProducts() {
+    var result = productService.getAllProducts();
 
-    // Update an existing product
-    @PostMapping("/update/{id}")
-    public String updateProduct(
-            @PathVariable Long id,
-            @ModelAttribute Product product) {
-        // Implementation here
-        product.setId(id);
-        productService.saveProduct(product);
-        return "redirect:/products";
-    }
+    return ApiResponse.<List<ProductResponse>>builder().data(result).build();
+  }
 
-    // Delete a product
-    @PostMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable Long id) {
-        productService.deleteProduct(id);
-        return "redirect:/products";
-    }
+  @GetMapping("/{id}")
+  public ApiResponse<ProductResponse> getProductById(@PathVariable Long id) {
+    var result = productService.getProductById(id);
+
+    return ApiResponse.<ProductResponse>builder().data(result).build();
+  }
+
+  @PutMapping("/{id}")
+  public ApiResponse<ProductResponse> updateProduct(
+      @PathVariable Long id, @Valid @RequestBody ProductRequest request) {
+    var result = productService.updateProduct(id, request);
+
+    return ApiResponse.<ProductResponse>builder().data(result).build();
+  }
+
+  @DeleteMapping("/{id}")
+  public ApiResponse<Void> deleteProduct(@PathVariable Long id) {
+    productService.deleteProduct(id);
+
+    return ApiResponse.<Void>builder().build();
+  }
 }

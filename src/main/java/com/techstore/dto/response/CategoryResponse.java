@@ -12,6 +12,6 @@ import lombok.experimental.FieldDefaults;
 @Builder
 @FieldDefaults(level = lombok.AccessLevel.PRIVATE)
 public class CategoryResponse {
-    Long id;
-    String name;
+  Long id;
+  String name;
 }
