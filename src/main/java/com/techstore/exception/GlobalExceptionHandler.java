@@ -1,14 +1,15 @@
 package com.techstore.exception;
 
 import com.techstore.dto.response.ApiResponse;
+import java.util.Map;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import java.util.Map;
-import java.util.stream.Collectors;
-
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -17,8 +18,13 @@ public class GlobalExceptionHandler {
             AppException exception
     ) {
 
-        ErrorCode errorCode =
-                exception.getErrorCode();
+        ErrorCode errorCode = exception.getErrorCode();
+
+        log.warn(
+                "Application exception: code={}, message={}",
+                errorCode.getCode(),
+                errorCode.getMessage()
+        );
 
         ApiResponse<Void> response =
                 ApiResponse.<Void>builder()
@@ -48,6 +54,11 @@ public class GlobalExceptionHandler {
                                 )
                         );
 
+        log.warn(
+                "Validation failed: {}",
+                errors
+        );
+
         ApiResponse<Map<String, String>> response =
                 ApiResponse.<Map<String, String>>builder()
                         .code(
@@ -73,6 +84,11 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode =
                 ErrorCode.UNCATEGORIZED_EXCEPTION;
+
+        log.error(
+                "Unhandled exception",
+                exception
+        );
 
         ApiResponse<Void> response =
                 ApiResponse.<Void>builder()

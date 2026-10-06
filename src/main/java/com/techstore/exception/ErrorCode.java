@@ -34,6 +34,12 @@ public enum ErrorCode {
             3001,
             "Category not found",
             HttpStatus.NOT_FOUND
+    ),
+
+    CATEGORY_NAME_EXISTED(
+            3002,
+            "Category name already exists",
+            HttpStatus.CONFLICT
     );
 
     private final int code;
